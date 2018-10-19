@@ -6,11 +6,10 @@ public class GetNote {
 	public int length;
 	
 	public GetNote(int slot, double delay, int length) {
-		// TODO Auto-generated constructor stub
-		
 		this.slot = slot;
 		this.delay = delay;
 		this.length = length;
+		//System.out.println(slot+"-"+delay+"-"+length);
 		
 	}
 

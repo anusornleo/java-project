@@ -4,11 +4,11 @@ import java.awt.event.KeyEvent;
 
 public class ColorKey {
 
-	public static Color[] colorNoteDefault = { Color.pink, Color.orange,
-			Color.orange, Color.pink };
-	public static Color[] colorNotePress = { new Color(255, 0, 102),
+	public static Color[] colorNoteDefault = { Color.orange, Color.orange,
+			Color.orange, Color.orange };
+	public static Color[] colorNotePress = { new Color(255, 153, 51),
 		new Color(255, 153, 51), new Color(255, 153, 51),
-		new Color(255, 0, 102) };
+		new Color(255, 153, 51) };
 	
 	public static Color[] colorNoteDisable = { new Color(255, 0, 102,128),
 		new Color(255, 153, 51,128), new Color(255, 153, 51,128),
