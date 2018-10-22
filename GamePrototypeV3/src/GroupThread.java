@@ -9,8 +9,6 @@ public class GroupThread {
 	
 	public GetNote[] notes;
 	
-	private static int test;
-
 	private int fps = 60;
 	private long spf = 1000 / fps;
 

@@ -53,16 +53,16 @@ public class KeyNote1 {
 //	}
 	
 
-	public static GetNote []notes = {
-			new GetNote(0, 0, 0), // wait into
-			new GetNote(1,0.5,9),
-			new GetNote(0,1.5,1),
-			new GetNote(2,0.5,5),
-			new GetNote(1,1,9),
-			new GetNote(2,0.5,1),
-			new GetNote(0,0,1),
-			new GetNote(0,1.5,1),
-			new GetNote(1,0.5,9)
-	};
+//	public static GetNote []notes = {
+//			new GetNote(0, 0, 0), // wait into
+//			new GetNote(1,0.5,9),
+//			new GetNote(0,1.5,1),
+//			new GetNote(2,0.5,5),
+//			new GetNote(1,1,9),
+//			new GetNote(2,0.5,1),
+//			new GetNote(0,0,1),
+//			new GetNote(0,1.5,1),
+//			new GetNote(1,0.5,9)
+//	};
 
 }

@@ -54,11 +54,16 @@ public class PlayFrame extends JFrame {
 			}
 		});
 		pp.setFocusable(true);
-
-		this.setSize(1000, 1000);
-		this.setLocationRelativeTo(null);
-		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		this.setSize(1920, 1080); // Have Top Bar [CLOSE]
+		
+//		this.setExtendedState(JFrame.MAXIMIZED_BOTH); // Set Fullscreen
+//		this.setUndecorated(true);
+		//this.setLocationRelativeTo(null);
+		this.setVisible(true);
+		
+		
 	}
 	
 	private static int index = 0;
@@ -83,9 +88,9 @@ public class PlayFrame extends JFrame {
 
 		Note();
 		
-		for(int i = 0; i < notes.length; i++) {
-			System.out.println(notes[i].slot + " " + notes[i].delay + " " + notes[i].length);
-		}
+//		for(int i = 0; i < notes.length; i++) {
+//			System.out.println(notes[i].slot + " " + notes[i].delay + " " + notes[i].length);
+//		}
 		
 		//TryNote();
 		new PlayFrame(notes);
@@ -93,7 +98,7 @@ public class PlayFrame extends JFrame {
 	
 
 	public static void Note(){
-		System.out.println(list.toString());
+		//System.out.println(list.toString());
 		int noteIndex = index/3;
 		int indexTemp = 0;
 		//GetNote []notes = new GetNote[mini_index];

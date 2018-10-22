@@ -40,10 +40,10 @@ public class KeyNoteGraphic {
 		else
 			g.setColor(color[slot]);
 		((Graphics2D) g).setStroke(new BasicStroke(5.0f));
-		g.fillRoundRect(slot * BTWkey + 200, y, width, height, 20, 20); // color in note
+		g.fillRoundRect(slot * BTWkey + 690, y, width, height, 20, 20); // color in note
 
 		g.setColor(Color.white);
-		g.drawRoundRect(slot * BTWkey + 200, y, width, height, 20, 20); // border
+		g.drawRoundRect(slot * BTWkey + 690, y, width, height, 20, 20); // border
 	}
 
 }
