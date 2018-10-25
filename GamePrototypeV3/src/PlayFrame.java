@@ -13,6 +13,7 @@ public class PlayFrame extends JFrame {
 
 	private Container canvas;
 	private PlayPanel pp;
+	private boolean mode = false;
 
 	public PlayFrame(GetNote[] list) {
 		canvas = getContentPane();
@@ -31,9 +32,13 @@ public class PlayFrame extends JFrame {
 					}
 				}
 				if(e.getKeyCode() == KeyEvent.VK_ENTER){
-					pp.startGame();
-					
+					System.out.println("Enter");
+					pp.select();
+					return;
 				}
+//				if(e.getKeyCode() == KeyEvent.VK_B){
+//					pp.startGame();
+//				}
 			}
 			
 			@Override

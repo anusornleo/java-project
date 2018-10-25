@@ -13,6 +13,8 @@ public class GroupThread {
 	private long spf = 1000 / fps;
 
 	private boolean hasNext = true;
+	
+	public static String c;
 
 	public GroupThread(PlayPanel pp, GetNote[] list) {
 		this.pp = pp;
@@ -38,15 +40,18 @@ public class GroupThread {
 						System.out.println(notes[i].delay);
 						int timer = (int) (notes[i].delay * 1000);
 						
-						if (timer > 0)
+						if (timer > 0) {
 							sleep(timer);
 						pp.addNote(notes[i]);
+						}
+						
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
 				hasNext = false;
+				System.out.println(hasNext);
 			}
 
 		};
@@ -61,6 +66,15 @@ public class GroupThread {
 		gameThread = new Thread() {
 
 			public void run() {
+				try {  
+					for (int i = 0;i<3;i++) {
+						c = String.valueOf(3);
+						sleep(1000);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
 				try {
 					while (!pp.isFinish() || hasNext) {
 
@@ -71,12 +85,24 @@ public class GroupThread {
 					e.printStackTrace();
 				}
 
+				;
+				try {
+					for (int i = 0;i<3;i++) {
+						
+						System.out.println("RUN3");
+						sleep(1000);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				pp.finish();
+				
 			}
 
 		};
 
 		gameThread.start();
+		
 	}
 
 }
