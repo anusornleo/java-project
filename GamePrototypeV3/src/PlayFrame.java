@@ -3,23 +3,34 @@ import java.awt.Container;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 public class PlayFrame extends JFrame {
 
 	private Container canvas;
 	private PlayPanel pp;
-	private boolean mode = false;
-
+	public boolean startgame;
+	public static boolean finishgame;
+	public static boolean selectMusic;
+	private static int numberMusic = 0;
+	
 	public PlayFrame(GetNote[] list) {
 		canvas = getContentPane();
 		canvas.setLayout(new BorderLayout());
 		
 		pp = new PlayPanel(this, list);
+		//gt = new GroupThread(pp, list);
 		canvas.add(pp, BorderLayout.CENTER);
 		
 		pp.addKeyListener(new KeyListener() {
@@ -31,15 +42,61 @@ public class PlayFrame extends JFrame {
 						return;
 					}
 				}
-				if(e.getKeyCode() == KeyEvent.VK_ENTER){
-					System.out.println("Enter");
+				if(e.getKeyCode() == KeyEvent.VK_ENTER && startgame==false && selectMusic==false && finishgame==false){
+					//System.out.println("1startgame:"+startgame+"| selectMusic:"+selectMusic+"| finishgame:"+finishgame);
+					selectMusic = true;
 					pp.select();
 					return;
+					}
+				else if(e.getKeyCode() == KeyEvent.VK_ENTER && startgame==false && selectMusic==true &&  finishgame==false){
+					//System.out.println("2startgame:"+startgame+"| selectMusic:"+selectMusic+"| finishgame:"+finishgame);
+					pp.startGame();
+					selectMusic = false;
+					startgame = true;
+					System.out.println("startgame"+startgame+" | selectgame"+selectMusic+" | finishgame"+finishgame);
+//					try {
+//						File soundFile = new File("Song0.wav");
+//						AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+//						Clip clip = AudioSystem.getClip();
+//						clip.open(audioIn);
+//						clip.start();
+//					} catch (UnsupportedAudioFileException evt) {
+//						evt.printStackTrace();
+//						System.out.println("No support");
+//					} catch (IOException evt) {
+//						evt.printStackTrace();
+//					} catch (LineUnavailableException evt) {
+//						evt.printStackTrace();
+//					}
+					return;
+					}
+				else if(e.getKeyCode() == KeyEvent.VK_ENTER && startgame==true && selectMusic==false &&  finishgame==false){
+					pp.pause();
 				}
-//				if(e.getKeyCode() == KeyEvent.VK_B){
-//					pp.startGame();
-//				}
+				else if(e.getKeyCode() == KeyEvent.VK_ENTER && startgame==true && selectMusic==false &&  finishgame==true){
+					//System.out.println("3startgame:"+startgame+"| selectMusic:"+selectMusic+"| finishgame:"+finishgame);
+					selectMusic = true;
+					startgame = false;
+					finishgame = false;
+					pp.playAgain();
+					return;
+					}
+				else if(e.getKeyCode() == KeyEvent.VK_LEFT && selectMusic==true){
+					//System.out.println("Lstartgame:"+startgame+"| selectMusic:"+selectMusic+"| finishgame:"+finishgame);
+					numberMusic -= 1;
+					if (numberMusic < 0) {numberMusic = 3;}
+					pp.numberMusic(numberMusic);
+					return;
+					}
+				else if(e.getKeyCode() == KeyEvent.VK_RIGHT && selectMusic==true){
+					//System.out.println("Rstartgame:"+startgame+"| selectMusic:"+selectMusic+"| finishgame:"+finishgame);
+					numberMusic += 1;
+					if (numberMusic > 3) {numberMusic = 0;}
+					pp.numberMusic(numberMusic);
+					return;
+					}
 			}
+
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -61,7 +118,7 @@ public class PlayFrame extends JFrame {
 		pp.setFocusable(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		this.setSize(1920, 1080); // Have Top Bar [CLOSE]
+		this.setSize(900, 1000); // Have Top Bar [CLOSE]
 		
 //		this.setExtendedState(JFrame.MAXIMIZED_BOTH); // Set Fullscreen
 //		this.setUndecorated(true);
@@ -77,39 +134,28 @@ public class PlayFrame extends JFrame {
 	public static int listSize = 0;
 
 	public static void main(String[] args) throws Exception {
-		//Scanner sc = new Scanner(new File("song1.txt"));
-		Scanner[] sc = new Scanner[2];
-		sc[0] = new Scanner(new File("song1.txt"));
-		sc[1] = new Scanner(new File("song2.txt"));
+		Scanner[] sc = new Scanner[4];
+		sc[0] = new Scanner(new File("song0.txt"));
+		sc[1] = new Scanner(new File("song1.txt"));
+		sc[2] = new Scanner(new File("song2.txt"));
+		sc[3] = new Scanner(new File("song3.txt"));
 		double num;
-		while(sc[1].hasNextLine()) {
-				num = sc[1].nextDouble();
+		while(sc[numberMusic].hasNextLine()) {
+				num = sc[numberMusic].nextDouble();
 				list.add(num);
 				index += 1;
-				//System.out.println(num);
 		}
 		listSize = list.size();
 		notes = new GetNote[listSize / 3];
-
 		Note();
-		
-//		for(int i = 0; i < notes.length; i++) {
-//			System.out.println(notes[i].slot + " " + notes[i].delay + " " + notes[i].length);
-//		}
-		
-		//TryNote();
 		new PlayFrame(notes);
 	}
 	
 
 	public static void Note(){
-		//System.out.println(list.toString());
-		int noteIndex = index/3;
 		int indexTemp = 0;
-		//GetNote []notes = new GetNote[mini_index];
 		int slot = 0, length=0;
 		double delay = 0;
-		//System.out.println(index+" "+mini_index);
 		for(int i=0; i<index; i += 3) {
 			double slot_b = list.get(i);
 			slot = (int) slot_b;
@@ -120,10 +166,10 @@ public class PlayFrame extends JFrame {
 		}
 		
 	}
-//	public static void TryNote() {
-//		for (int i = 0; i < notes.length; i++) {
-//            System.out.println(notes[i].slot+"/"+notes[i].delay+"/"+notes[i].length);
-//        }
-//	}
+
+	public static void finishValue(boolean finishgame2) {
+		// TODO Auto-generated method stub
+		finishgame = finishgame2;
+	}
 
 }

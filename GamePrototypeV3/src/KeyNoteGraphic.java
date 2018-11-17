@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -23,8 +24,6 @@ public class KeyNoteGraphic {
 		this.second = second;
 	}
 
-
-
 	/**
 	 * draw note
 	 * @param g
@@ -40,10 +39,10 @@ public class KeyNoteGraphic {
 		else
 			g.setColor(color[slot]);
 		((Graphics2D) g).setStroke(new BasicStroke(5.0f));
-		g.fillRoundRect(slot * BTWkey + 690, y, width, height, 20, 20); // color in note
+		g.fillRoundRect(slot * BTWkey + 700, y, width, height, 20, 20); // color in note
 
 		g.setColor(Color.white);
-		g.drawRoundRect(slot * BTWkey + 690, y, width, height, 20, 20); // border
+		g.drawRoundRect(slot * BTWkey + 700, y, width, height, 20, 20); // border
 	}
 
 }

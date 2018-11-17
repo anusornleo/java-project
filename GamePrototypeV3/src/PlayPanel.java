@@ -3,10 +3,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -15,10 +17,11 @@ public class PlayPanel extends JPanel {
 
 	private Color[] colorNote;
 	private final JFrame fr;
-	private boolean startgame = false;
-	private boolean finishgame = false;
+	public static boolean startgame = false;
+	public static boolean selectMusic = false;
+	public static boolean finishgame = false;
 	private ArrayList<KeyNoteGraphic> noteList = new ArrayList<>();
-	private int noteSpeed = 10;
+	private int noteSpeed = 1;
 	private int yBound = 750;
 	private String accurateText = "";
 	private String comboText = "";
@@ -32,17 +35,25 @@ public class PlayPanel extends JPanel {
 	private int rangeClick = 100;
 	private int BTWkey = noteWidth+40;
 	GetNote[] notes;
-	int adjX = 690, adjY = 750;
+	int adjX = 700, adjY = 750;
 	int heightKey = 100;
-	Font keyNoteFont = new Font("Venus Rising", Font.BOLD, 40);
-	BufferedImage img[] = new BufferedImage[2];
-	private boolean selectMusic = false;
+	Font keyNoteFont = new Font("WaffleRegular", Font.BOLD, 40);
+	BufferedImage imgHome,imgKeyBG,imgKey;
+	BufferedImage imgCover[] = new BufferedImage[4];
+	BufferedImage imgBg[] = new BufferedImage[4];
+	public static int numberMusic = 0;
+	public static boolean pause = false;
 	
-	public void img_load() {  // Load image form same Image
-		//String path[] = {"bg1.png","bg2.png"};
-		for (int i = 0; i < 2; i++) {
+	
+	
+	public void img_load() { // Load image form same Image
+		for (int i = 0; i < 4; i++) {
 			try {
-				img[i] = ImageIO.read(new File(ColorKey.path[i]));
+				imgKey = ImageIO.read(new File("pic\\keyBack.png"));
+				imgKeyBG = ImageIO.read(new File("pic\\keyBG.png"));
+				imgHome = ImageIO.read(new File("bg_home.png"));
+				imgBg[i] = ImageIO.read(new File(ColorKey.Bg[i]));
+				imgCover[i] = ImageIO.read(new File(ColorKey.cover[i]));
 			} catch (IOException e) {
 			}
 		}
@@ -72,27 +83,23 @@ public class PlayPanel extends JPanel {
 		// otherwise, display text to start a game.
 		//g.drawImage(background_a, 0, 0, null); //background image each Music
 		
-		if (startgame==false && finishgame == false) {
-			g.drawImage(img[0], 0, 0,1920,1080, this);
+		if (startgame==false && finishgame == false && selectMusic==false) {
+			g.drawImage(imgHome, 0, 0,1920,1080, this);
 			g.setColor(Color.white);
 			g.setFont(keyNoteFont);
 			g.drawString("Enter to...", fr.getWidth() / 2 - 200, 400);
 			g.drawString("START!!", fr.getWidth() / 2 - 150, 500);
+			
 		}
-		else if (selectMusic==true) {
-			g.setColor(Color.blue);
-			g.fillRect(640, 400, 640, 400);
-			//selectMusic(g);
+		if (startgame==false && selectMusic==true && finishgame==false) {
+			count = 0;
+			selectMusic(g);
 		}
 		else if (startgame==true) {
-			selectMusic=false;
 			runningNote(g);
 			
 		}
 		else if (finishgame == true) {
-			System.out.println("Finish Game");
-			g.setColor(Color.blue);
-			g.fillRect(0, 0, 200, 200);
 		}
 
 		
@@ -139,7 +146,7 @@ public class PlayPanel extends JPanel {
 				break;
 			}
 		}
-		repaint();
+		//repaint();
 	}
 
 	public void keyRelease(int j) {
@@ -174,9 +181,18 @@ public class PlayPanel extends JPanel {
 				break;
 			}
 		}
-		repaint();
+		//repaint();
 	}
 
+	public void updateNotes2() {
+		// TODO Auto-generated method stub
+		try {
+			repaint();
+		} catch (Exception e) {
+
+		}
+	}
+	
 	public void startGame() {
 		if (!startgame) {
 			startgame = true;
@@ -192,6 +208,7 @@ public class PlayPanel extends JPanel {
 
 	public void addNote(GetNote note) {
 		// TODO Auto-generated method stub
+		System.out.println("note");
 		noteList.add(new KeyNoteGraphic(note, noteWidth));
 	}
 
@@ -234,8 +251,10 @@ public class PlayPanel extends JPanel {
 	public void finish() {
 		//startgame = false;
 		finishgame = true;
+		PlayFrame.finishValue(finishgame);
 		comboText = "";
 		accurateText = "";
+		scoreText = "";
 		//scoreText = "Score : "+String.valueOf(count);
 //		Graphics g = null;
 //		for(int i = 0;i<500;i++) {
@@ -249,22 +268,19 @@ public class PlayPanel extends JPanel {
 		
 		repaint();
 	}
-	public void coundown(int x,Graphics g) {
-	}
 	public void runningNote(Graphics g) {
 		
-		g.drawImage(img[1], 0, 0, 1920, 1080, null);
+		g.drawImage(imgBg[numberMusic], 0, 0, 1920, 1080, null);
 		g.setColor(new Color(0, 0, 0, 50) );
 		g.fillRect(640, 0, 640, fr.getHeight());
+		g.drawImage(imgKeyBG, 640, adjY+5, 640, 302, null);
 		for (int i = 0; i < 4; i++) {
 			g.setColor(new Color(255, 255, 153));
-			g.fillRoundRect(adjX + i * (BTWkey)+45, 0, 10, 800, 0, 0);
+			g.fillRoundRect(adjX + i * (BTWkey)+45, 0, 10, 800, 0, 0); // Line under KeyNote
 			
-			g.setColor(Color.white);
-			g.fillRoundRect(adjX + i * (BTWkey), adjY, noteWidth, heightKey,15,15); // border
 			
 			g.setColor(colorNote[i]);
-			g.fillRoundRect(adjX + i * (BTWkey)+5, adjY+5, noteWidth-10, heightKey-10, 10, 10);
+			g.drawImage(imgKey,adjX + i * (BTWkey)+5, adjY+5, noteWidth-10, 192,null);
 
 			g.setColor(Color.white);
 			g.setFont(keyNoteFont);
@@ -272,39 +288,62 @@ public class PlayPanel extends JPanel {
 			g.drawString(keyNote[i], adjX+(noteWidth/2) + i * BTWkey-20,adjY + heightKey / 2 +15);
 			
 		}
-		g.drawString(GroupThread.c,980,500);
+		//g.drawString(GroupThread.c,980,500);
 		for (KeyNoteGraphic pair : noteList) {
 			g.setColor(new Color(255, 255, 153));
 			pair.draw(g, colorNote);
 			
-			for (int i = 0; i < 4; i++) {
-				
-				g.setColor(Color.white);
-				g.fillRoundRect(adjX + i * (BTWkey), adjY, noteWidth, heightKey,15,15); // border
-				
-				g.setColor(colorNote[i]);
-				g.fillRoundRect(adjX + i * (BTWkey)+5, adjY+5, noteWidth-10, heightKey-10, 10, 10);
-
-				g.setColor(Color.white);
-				g.setFont(keyNoteFont);
-				String[] keyNote = { "D", "F", "J", "K" };
-				g.drawString(keyNote[i], adjX+(noteWidth/2) + i * BTWkey-20,adjY + heightKey / 2 +15);
-				
-			}
+//			for (int i = 0; i < 4; i++) {
+//				
+//				g.setColor(Color.white);
+//				g.fillRoundRect(adjX + i * (BTWkey), adjY, noteWidth, heightKey,15,15); // border
+//				
+//				g.setColor(colorNote[i]);
+//				g.fillRoundRect(adjX + i * (BTWkey)+5, adjY+5, noteWidth-10, heightKey-10, 10, 10);
+//
+//				g.setColor(Color.white);
+//				g.setFont(keyNoteFont);
+//				String[] keyNote = { "D", "F", "J", "K" };
+//				g.drawString(keyNote[i], adjX+(noteWidth/2) + i * BTWkey-20,adjY + heightKey / 2 +15);
+//				
+//			}
 		}
 		if ( finishgame==true ) {
-			g.setColor(Color.green);
-			g.fillRoundRect(500, 500, 500, 500, 10, 10);
-			g.drawString("SCORE : "+String.valueOf(count),980,500);
+			g.setColor(new Color(255,182,50));
+			g.fillRoundRect(640, 200, 640, 400, 10, 10);
+			g.setColor(Color.white);
+			g.drawString("SCORE : "+String.valueOf(count),800,320);
 		}
 	}
 	
 	public void select() {
 		selectMusic = true;
+		new GroupThread(this, notes);
+		//System.out.println("startgame:"+startgame+"| selectMusic:"+selectMusic+"| finishgame:"+finishgame);
 	}
 	
 	public void selectMusic(Graphics g) {
-		g.setColor(Color.blue);
-		g.fillRect(640, 400, 640, 400);
+		g.drawImage(imgCover[numberMusic], 640, 200, 640, 512, null);
+		count = 0;
+//		g.setColor(Color.blue);
+//		g.fillRect(640, 400, 640, 400);
+	}
+	
+	public void numberMusic(int number) {
+		System.out.println("Number Music "+number);
+		numberMusic = number;
+	}
+
+
+	public void playAgain() {
+		// TODO Auto-generated method stub
+		startgame=false; selectMusic=true;finishgame=false;
+	}
+
+
+	public void pause() {
+		// TODO Auto-generated method stub
+		GroupThread gt = new GroupThread(null, notes);
+		gt.pause();
 	}
 }
